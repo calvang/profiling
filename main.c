@@ -1,13 +1,13 @@
 #include <stdio.h>
 #include <string.h>
 
-#define LONG_TIME 0xffffffff
+#define LONG_TIME (0xffffffff/8)
 
 void child1(void) {
-	printf("\n Inside child1()\n");
+	printf("\n     Inside child1()\n");
 	int i = 0;
 
-	for( ; i < (LONG_TIME/4); i++) {
+	for( ; i < (LONG_TIME * 2); i++) {
 		// Prevent the compiler from optimizing out empty loop
 		asm("nop;");
 	}
@@ -18,7 +18,7 @@ void child1(void) {
 void child2(void) {
 	int i = 0;
 
-	for( ; i < (0xf); i++) {
+	for( ; i < 16; i++) {
 		// Prevent the compiler from optimizing out empty loop
 		asm("nop;");
 	}
@@ -27,17 +27,17 @@ void child2(void) {
 }
 
 void parent(void) {
-	printf("\n Inside parent \n");
+	printf("\n   Inside parent \n");
 	int i = 0;
 
-	for ( ; i < (LONG_TIME/16); i++) {
+	for (i=0 ; i < (LONG_TIME); i++) {
 		// Prevent the compiler from optimizing out empty loop
 		asm("nop;");
 	}
 	child1();
 
-	printf("\n Starting child2() loop\n");
-	for ( ; i < (LONG_TIME/8); i++) {
+	printf("\n     Starting child2() loop\n");
+	for (i=0 ; i < (LONG_TIME/2); i++) {
 		child2();
 	}
 
@@ -45,10 +45,10 @@ void parent(void) {
 }
 
 static void no_children(void) {
-	printf("\n Inside no_children \n");
+	printf("\n   Inside no_children \n");
 	int i = 0;
 
-	for ( ; i < (LONG_TIME/32); i++) {
+	for (i=0; i < (LONG_TIME * 5); i++) {
 		// Prevent the compiler from optimizing out empty loop
 		asm("nop;");
 	}
@@ -59,15 +59,6 @@ static void no_children(void) {
 int main(int argc, char **argv) {
 	printf("\n Inside main()\n");
 	int i = 0;
-
-	// If run with "baseline", then exit after only one LONG_TIME loop
-	if ((argc > 1) && (0 == strcmp("baseline", argv[1]))) {
-		for ( ; i < (LONG_TIME); i++) {
-			// Prevent the compiler from optimizing out empty loop
-			asm("nop;");
-		}
-		return 0;
-	}
 
 	parent();
 	no_children();
