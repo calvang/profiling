@@ -1,5 +1,7 @@
 #include <stdio.h>
+#include <stdlib.h> // added
 #include <string.h>
+//#include <unistd.h>
 
 #define LONG_TIME (0xffffffff/8)
 
@@ -56,13 +58,57 @@ static void no_children(void) {
 	return;
 }
 
+void Branch1(int i, int prob){
+	if (i < prob) {
+		printf("\n Inside branch1()\n");
+	}
+	return;
+}
+
+void Branch2(int i, int prob){
+	if (i < prob) {
+		printf("\n Inside branch2()\n");
+	}
+	return;
+}
+
+void Branch3(int i, int prob){
+	if (i < prob) {
+		printf("\n Inside branch3()\n");
+	}
+	return;
+}
+
+void never(int i){
+	if (i > 4) {
+		printf("\n Inside never()\n");
+	}
+	return;
+}
+void always(int i){
+	if (i < 4) {
+		printf("\n Inside always()\n");
+	}
+	return;
+}
+
 int main(int argc, char **argv) {
 	printf("\n Inside main()\n");
 	int i = 0;
-
-	parent();
-	no_children();
-
+	// added 
+	//parent();
+	//no_children();
+	int branch1 = atoi(argv[1]);
+	int branch2 = atoi(argv[2]);
+	int branch3 = atoi(argv[3]);
+	for (int k = 0; k < 2000; ++k){
+		i = rand() % 4; // generate random values from 0 to 3 
+		Branch1(i,branch1);
+		Branch2(i,branch2);
+		Branch3(i,branch3);
+		never(i);
+		always(i);
+	}
 	printf("\n Exiting \n");
 	return 0;
 }
